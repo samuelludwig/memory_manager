@@ -1,18 +1,7 @@
 defmodule MemoryManagerCore do
-  @moduledoc """
-  Documentation for MemoryManagerCore.
-  """
+  alias MemoryManagerCore.{MemoryState, CpuProcess, MemoryBlock}
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> MemoryManagerCore.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def add_process(%MemoryState{} = state, p_name, p_size) do
+    state
   end
 end

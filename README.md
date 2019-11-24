@@ -1,2 +1,13 @@
 # memory_manager
-COM310 Memory Manager Simulator
+
+GitHub repo located at: https://github.com/samuelludwig/memory_manager
+
+Memory Manager Simulation project for COM 310
+
+Task: Create an interactive webapp that displays the impact of different kinds 
+of algorithms regarding the management of an OS's memory resources.
+
+The tech stack employed will be as follows:
+
+- Backend: Elixir (using Cowboy to manage the server connections)
+- Frontend: Elm
