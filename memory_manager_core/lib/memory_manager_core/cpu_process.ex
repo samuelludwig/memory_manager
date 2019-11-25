@@ -6,4 +6,8 @@ defmodule MemoryManagerCore.CpuProcess do
           start_address: integer(),
           end_address: integer()
         }
+
+  def new(fields) do
+    struct!(__MODULE__, fields)
+  end
 end

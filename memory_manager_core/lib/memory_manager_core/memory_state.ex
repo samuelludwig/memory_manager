@@ -13,7 +13,12 @@ defmodule MemoryManagerCore.MemoryState do
       total_memory: total_memory,
       os_size: os_size,
       cpu_processes: [],
-      blocks_of_free_memory: []
+      blocks_of_free_memory: [
+        %MemoryManagerCore.MemoryBlock{
+          start_address: os_size,
+          end_address: total_memory
+        }
+      ]
     }
   end
 
