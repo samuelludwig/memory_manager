@@ -11,3 +11,10 @@ The tech stack employed will be as follows:
 
 - Backend: Elixir (using Cowboy to manage the server connections)
 - Frontend: Elm
+
+## Strategy Breakdown
+
+- There are 3 main actions that are going to be performed:
+  - Insert a process
+  - Remove a process
+  - Compact processes/memory
