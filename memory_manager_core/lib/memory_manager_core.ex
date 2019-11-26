@@ -48,4 +48,9 @@ defmodule MemoryManagerCore do
   defp process_can_fit_in_memory_block?(%MemoryBlock{} = block, p_size) do
     get_size_of_memory_block(block) >= p_size
   end
+
+  defp sort_memory_blocks_by_size(order \\ :descending, list_of_memory_blocks)
+  defp sort_memory_blocks_by_size(:descending, list_of_memory_blocks) do
+    Enum.sort(list_of_memory_blocks, &(get_size_of_memory_block(&1) >= get_size_of_memory_block(&2)))
+  end
 end
