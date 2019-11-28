@@ -75,5 +75,39 @@ defmodule MemoryManagerCoreTest do
                }
              ]
     end
+
+    test "returns a MemoryState with correctly reduced memory blocks when two processes are added with size > 0",
+         context do
+      state = context[:init_state]
+      p_name = context[:p1_data].name
+      p_size = context[:p1_data].size
+      state = add_process(state, :first_fit, p_name, p_size)
+
+      p_name = context[:p2_data].name
+      p_size = context[:p2_data].size
+      state = add_process(state, :first_fit, p_name, p_size)
+
+      assert state.blocks_of_free_memory == [
+               %MemoryBlock{
+                 start_address: state.os_size + context[:p1_data].size + context[:p2_data].size,
+                 end_address: state.total_memory
+               }
+             ]
+    end
+
+    test "returns a MemoryState with no memory blocks when all space has been taken up by processes",
+         context do
+      state = context[:init_state]
+      p_size = state.total_memory - state.os_size
+      new_state = add_process(state, :first_fit, "Pn", p_size)
+      assert new_state.blocks_of_free_memory == []
+    end
+
+    test "returns an unchanged MemoryState when a process is given that cannot fit into any available memory blocks",
+         context do
+      state = context[:init_state]
+      p_size = state.total_memory + 1
+      assert state == add_process(state, :first_fit, "fail", p_size)
+    end
   end
 end
