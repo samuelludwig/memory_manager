@@ -50,7 +50,6 @@ defmodule MemoryManagerCoreTest do
              ]
     end
 
-    @tag :skip
     test "returns a MemoryState with multiple processes when two processes are added with sizes > 0",
          context do
       state = context[:init_state]
