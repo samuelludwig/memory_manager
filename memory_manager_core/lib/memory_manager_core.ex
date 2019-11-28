@@ -7,23 +7,8 @@ defmodule MemoryManagerCore do
   end
 
   def add_process(state, algorithm, p_name, p_size, can_fit?) when p_size > 0 and can_fit? do
-    index_of_memory_block_to_be_replaced =
-      get_index_of_memory_block_to_be_replaced(state, algorithm, p_size)
-
-    memory_block_to_be_replaced =
-      get_memory_block_at_index_in_memory_state_struct(
-        state,
-        index_of_memory_block_to_be_replaced
-      )
-
-    reduced_memory_block = reduce_size_of_memory_block(memory_block_to_be_replaced, p_size)
-
-    new_memory_block_list =
-      replace_memory_block_at_index_in_memory_state_struct(
-        state,
-        index_of_memory_block_to_be_replaced,
-        reduced_memory_block
-      )
+    {memory_block_to_be_replaced, index_of_block} =
+      get_memory_block_to_be_replaced_with_index(state, algorithm, p_size)
 
     state
     |> add_process_to_list_of_processes_in_memory_state_struct(
@@ -31,12 +16,43 @@ defmodule MemoryManagerCore do
       p_size,
       memory_block_to_be_replaced
     )
-    |> update_blocks_of_free_memory_in_memory_state_struct(new_memory_block_list)
+    |> update_blocks_of_free_memory_in_memory_state_struct(
+      memory_block_to_be_replaced,
+      index_of_block,
+      p_size
+    )
   end
 
   def add_process(state, _algorithm, _p_name, p_size, can_fit?)
       when p_size <= 0 or not can_fit? do
     state
+  end
+
+  defp update_blocks_of_free_memory_in_memory_state_struct(
+         state,
+         memory_block_to_be_replaced,
+         index_of_block,
+         p_size
+       ) do
+    reduced_memory_block = reduce_size_of_memory_block(memory_block_to_be_replaced, p_size)
+
+    new_memory_block_list =
+      replace_memory_block_at_index_in_memory_state_struct(
+        state,
+        index_of_block,
+        reduced_memory_block
+      )
+
+    %{state | blocks_of_free_memory: new_memory_block_list}
+  end
+
+  defp get_memory_block_to_be_replaced_with_index(state, algorithm, p_size) do
+    index_of_block = get_index_of_memory_block_to_be_replaced(state, algorithm, p_size)
+
+    memory_block_to_be_replaced =
+      get_memory_block_at_index_in_memory_state_struct(state, index_of_block)
+
+    {memory_block_to_be_replaced, index_of_block}
   end
 
   defp process_can_fit_into_memory?(
@@ -156,10 +172,6 @@ defmodule MemoryManagerCore do
 
   defp get_index_of_memory_block_in_list(list_of_memory_blocks, memory_block) do
     Enum.find_index(list_of_memory_blocks, &(&1 == memory_block))
-  end
-
-  defp update_blocks_of_free_memory_in_memory_state_struct(state, new_list) do
-    %{state | blocks_of_free_memory: new_list}
   end
 
   defp append_process_to_list_of_processes_in_memory_state_struct(
