@@ -127,14 +127,14 @@ defmodule MemoryManagerCore do
   defp sort_memory_blocks_by_size(list_of_memory_blocks, :ascending) do
     Enum.sort(
       list_of_memory_blocks,
-      &(get_size_of_memory_block(&1) >= get_size_of_memory_block(&2))
+      &(get_size_of_memory_block(&1) <= get_size_of_memory_block(&2))
     )
   end
 
   defp sort_memory_blocks_by_size(list_of_memory_blocks, :descending) do
     Enum.sort(
       list_of_memory_blocks,
-      &(get_size_of_memory_block(&1) <= get_size_of_memory_block(&2))
+      &(get_size_of_memory_block(&1) >= get_size_of_memory_block(&2))
     )
   end
 
