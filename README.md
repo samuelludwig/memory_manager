@@ -43,3 +43,15 @@ For each in list of memory blocks:
     AND
     break
 ```
+
+#### Best/Worst fit
+
+- Best and Worst fit will be largely similar to the First-Fit algorithm, only with an intermediary step of sorting the memory blocks by size before evaluating the validity of each memory block.
+
+### Algorithm for Removing a Processes
+
+```
+Step 1: Delete process from the list
+Step 2: Add a block of free memory in its place
+Step 3: Combine that block of memory with surrounding ones if possible
+```
