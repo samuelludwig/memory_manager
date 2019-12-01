@@ -7,7 +7,6 @@ defmodule MemoryManagerCoreTest do
   setup do
     [
       fresh_state: MemoryState.new(4096, 512),
-
       complex_state: %MemoryState{
         total_memory: 4000,
         os_size: 400,
@@ -19,7 +18,6 @@ defmodule MemoryManagerCoreTest do
           %CpuProcess{name: "P1", start_address: 600, end_address: 800}
         ]
       },
-
       p1_data: %{name: "p1", size: 400},
       p2_data: %{name: "p2", size: 600}
     ]
@@ -125,36 +123,66 @@ defmodule MemoryManagerCoreTest do
 
     test "returns correct MemoryState when using Best-Fit algorithm", context do
       state = context[:complex_state]
+
       assert add_process(state, :best_fit, "Px", 100) ==
-        %MemoryState{
-          total_memory: 4000,
-          os_size: 400,
-          blocks_of_free_memory: [
-            %MemoryBlock{start_address: 500, end_address: 600},
-            %MemoryBlock{start_address: 800, end_address: 4000}
-          ],
-          cpu_processes: [
-            %CpuProcess{name: "P1", start_address: 600, end_address: 800},
-            %CpuProcess{name: "Px", start_address: 400, end_address: 500}
-          ]
-        }
+               %MemoryState{
+                 total_memory: 4000,
+                 os_size: 400,
+                 blocks_of_free_memory: [
+                   %MemoryBlock{start_address: 500, end_address: 600},
+                   %MemoryBlock{start_address: 800, end_address: 4000}
+                 ],
+                 cpu_processes: [
+                   %CpuProcess{name: "P1", start_address: 600, end_address: 800},
+                   %CpuProcess{name: "Px", start_address: 400, end_address: 500}
+                 ]
+               }
     end
 
     test "returns correct MemoryState when using Worst-Fit algorithm", context do
       state = context[:complex_state]
+
       assert add_process(state, :worst_fit, "Px", 100) ==
-        %MemoryState{
-          total_memory: 4000,
-          os_size: 400,
-          blocks_of_free_memory: [
-            %MemoryBlock{start_address: 400, end_address: 600},
-            %MemoryBlock{start_address: 900, end_address: 4000}
-          ],
-          cpu_processes: [
-            %CpuProcess{name: "P1", start_address: 600, end_address: 800},
-            %CpuProcess{name: "Px", start_address: 800, end_address: 900}
-          ]
-        }
+               %MemoryState{
+                 total_memory: 4000,
+                 os_size: 400,
+                 blocks_of_free_memory: [
+                   %MemoryBlock{start_address: 400, end_address: 600},
+                   %MemoryBlock{start_address: 900, end_address: 4000}
+                 ],
+                 cpu_processes: [
+                   %CpuProcess{name: "P1", start_address: 600, end_address: 800},
+                   %CpuProcess{name: "Px", start_address: 800, end_address: 900}
+                 ]
+               }
+    end
+  end
+
+  describe "remove_process/2" do
+    test "returns a MemoryState with a removed process", context do
+      state = context[:complex_state]
+      new_state = remove_process(state, "P1")
+      assert new_state.cpu_processes == []
+    end
+
+    test "returns an unchanged MemoryState when an invalid process name is given", context do
+      state = context[:complex_state]
+      assert remove_process(state, "failure") == state
+    end
+
+    test "returns a MemoryState with an altered MemoryBlock list", context do
+      state = context[:complex_state]
+      new_state = remove_process(state, "P1")
+      refute new_state.blocks_of_free_memory == state.blocks_of_free_memory
+    end
+
+    test "returns a MemoryState with each adjacent memory block combined", context do
+      state = context[:complex_state]
+      new_state = remove_process(state, "P1")
+
+      assert new_state.blocks_of_free_memory == [
+               %MemoryBlock{start_address: 400, end_address: 4000}
+             ]
     end
   end
 end
