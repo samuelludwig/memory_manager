@@ -14,6 +14,33 @@ defmodule MemoryManagerCore do
     remove_process(state, p_name, process_exists?)
   end
 
+  # I could have approached this in a few different ways, in this particular
+  # implementation I opted to simply rebuild the MemoryState as if it were brand
+  # new, readding each process, one after another, using the add_process/4 function
+  def compact_memory(%MemoryState{cpu_processes: cpu_processes} = state) do
+    new_state = MemoryState.new(state.total_memory, state.os_size)
+
+    derive_name_size_tuples_from_list_of_processes(cpu_processes)
+    |> add_process_to_state_for_each_name_size_tuple_in_list(new_state)
+  end
+
+  defp derive_name_size_tuples_from_list_of_processes(list) do
+    Enum.map(list, fn process ->
+      {process.name, get_size_of_process_in_list_by_name(list, process.name)}
+    end)
+  end
+
+  defp add_process_to_state_for_each_name_size_tuple_in_list(list_of_tuples, state) do
+    Enum.reduce(list_of_tuples, state, fn {p_name, p_size}, acc ->
+      add_process(acc, :first_fit, p_name, p_size)
+    end)
+  end
+
+  defp get_size_of_process_in_list_by_name(list_of_processes, name) do
+    process = Enum.find(list_of_processes, fn p -> p.name == name end)
+    process.end_address - process.start_address
+  end
+
   defp add_process(state, algorithm, p_name, p_size, can_fit?) when p_size > 0 and can_fit? do
     {memory_block_to_be_replaced, index_of_block} =
       MH.get_memory_block_to_be_replaced_with_index(state, algorithm, p_size)

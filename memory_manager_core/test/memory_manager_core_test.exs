@@ -18,6 +18,34 @@ defmodule MemoryManagerCoreTest do
           %CpuProcess{name: "P1", start_address: 600, end_address: 800}
         ]
       },
+      state_with_two_processes: %MemoryState{
+        total_memory: 4000,
+        os_size: 400,
+        blocks_of_free_memory: [
+          %MemoryBlock{start_address: 400, end_address: 600},
+          %MemoryBlock{start_address: 800, end_address: 900},
+          %MemoryBlock{start_address: 1200, end_address: 4000}
+        ],
+        cpu_processes: [
+          %CpuProcess{name: "P1", start_address: 600, end_address: 800},
+          %CpuProcess{name: "P2", start_address: 900, end_address: 1200}
+        ]
+      },
+      state_with_three_processes: %MemoryState{
+        total_memory: 4000,
+        os_size: 400,
+        blocks_of_free_memory: [
+          %MemoryBlock{start_address: 400, end_address: 600},
+          %MemoryBlock{start_address: 800, end_address: 900},
+          %MemoryBlock{start_address: 950, end_address: 1600},
+          %MemoryBlock{start_address: 1800, end_address: 4000}
+        ],
+        cpu_processes: [
+          %CpuProcess{name: "P1", start_address: 600, end_address: 800},
+          %CpuProcess{name: "P2", start_address: 900, end_address: 950},
+          %CpuProcess{name: "P3", start_address: 1600, end_address: 1800}
+        ]
+      },
       p1_data: %{name: "p1", size: 400},
       p2_data: %{name: "p2", size: 600}
     ]
@@ -182,6 +210,29 @@ defmodule MemoryManagerCoreTest do
 
       assert new_state.blocks_of_free_memory == [
                %MemoryBlock{start_address: 400, end_address: 4000}
+             ]
+    end
+  end
+
+  describe "compact_memory/1" do
+    test "returns an unaltered MemoryState when there are no processes present", context do
+      state = context[:fresh_state]
+      assert compact_memory(state) == state
+    end
+
+    test "returns a MemoryState with contiguous processes", context do
+      state1 = context[:state_with_two_processes] |> compact_memory()
+      state2 = context[:state_with_three_processes] |> compact_memory()
+
+      assert state1.cpu_processes == [
+               %CpuProcess{name: "P1", start_address: 400, end_address: 600},
+               %CpuProcess{name: "P2", start_address: 600, end_address: 900}
+             ]
+
+      assert state2.cpu_processes == [
+               %CpuProcess{name: "P1", start_address: 400, end_address: 600},
+               %CpuProcess{name: "P2", start_address: 600, end_address: 650},
+               %CpuProcess{name: "P3", start_address: 650, end_address: 850}
              ]
     end
   end
