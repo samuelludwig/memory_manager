@@ -2,7 +2,9 @@ defmodule MemoryManagerCoreTest do
   use ExUnit.Case
 
   import MemoryManagerCore
-  alias MemoryManagerCore.{MemoryState, CpuProcess, MemoryBlock}
+  import MemoryManagerCore.MemoryHelpers
+  import MemoryManagerCore.ProcessHelpers
+  alias MemoryManagerCore.{MemoryState, CpuProcess, MemoryBlock, SimParameters}
 
   setup do
     [
@@ -234,6 +236,78 @@ defmodule MemoryManagerCoreTest do
                %CpuProcess{name: "P2", start_address: 600, end_address: 650},
                %CpuProcess{name: "P3", start_address: 650, end_address: 850}
              ]
+    end
+  end
+
+  describe "calculate_state/1" do
+    test "correctly executes add_process, remove_process, and compact_memory", context do
+      new_params = %SimParameters{action: :new}
+      state = calculate_state(new_params)
+
+      assert state ==
+               %MemoryState{
+                 total_memory: 4000,
+                 os_size: 400,
+                 blocks_of_free_memory: [
+                   %MemoryBlock{start_address: 400, end_address: 4000}
+                 ],
+                 cpu_processes: []
+               }
+
+      add1_params = %SimParameters{
+        state: state,
+        action: :add,
+        args: [algorithm: :first_fit, name: "P0", size: 200]
+      }
+
+      state = calculate_state(add1_params)
+
+      add2_params = %SimParameters{
+        state: state,
+        action: :add,
+        args: [algorithm: :best_fit, name: "P1", size: 200]
+      }
+
+      state = calculate_state(add2_params)
+
+      remove_params = %SimParameters{state: state, action: :remove, args: [name: "P0"]}
+      state = calculate_state(remove_params)
+      assert state == context[:complex_state]
+
+      worst_params = %SimParameters{
+        state: state,
+        action: :add,
+        args: [algorithm: :worst_fit, name: "P2", size: 200]
+      }
+
+      state = calculate_state(worst_params)
+
+      assert state == %MemoryState{
+               total_memory: 4000,
+               os_size: 400,
+               blocks_of_free_memory: [
+                 %MemoryBlock{start_address: 400, end_address: 600},
+                 %MemoryBlock{start_address: 1000, end_address: 4000}
+               ],
+               cpu_processes: [
+                 %CpuProcess{name: "P1", start_address: 600, end_address: 800},
+                 %CpuProcess{name: "P2", start_address: 800, end_address: 1000}
+               ]
+             }
+
+      state = calculate_state(%SimParameters{state: state, action: :compact, args: nil})
+
+      assert state == %MemoryState{
+               total_memory: 4000,
+               os_size: 400,
+               blocks_of_free_memory: [
+                 %MemoryBlock{start_address: 800, end_address: 4000}
+               ],
+               cpu_processes: [
+                 %CpuProcess{name: "P1", start_address: 400, end_address: 600},
+                 %CpuProcess{name: "P2", start_address: 600, end_address: 800}
+               ]
+             }
     end
   end
 end
