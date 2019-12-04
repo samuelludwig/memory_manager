@@ -22,7 +22,26 @@ defmodule MemoryManagerCli.Cli do
   end
 
   defp print_help_message() do
-    
+    IO.puts(
+      """
+      \n @
+      \n @ ENTER
+      \n @
+      \n @ n 'RET'
+      \n @ \\__ Start from scratch with a new memory state
+      \n @
+      \n @ a f_or_b_or_w size 'RET'
+      \n @ \\__ Add a process of size `size` into the memory state, according to the
+      \n @      algorithm indicated by the letter in the second field (f = first_fit, b = best_fit, w = worst_fit)
+      \n @
+      \n @ r name 'RET'
+      \n @ \\__ Remove the process with name `name` from the memory state
+      \n @
+      \n @ c 'RET'
+      \n @ \\__ Compact the current memory state
+      \n @ \n
+      """
+    )
   end
 
   defp write_state(%MemoryManagerCore.MemoryState{} = state) do
