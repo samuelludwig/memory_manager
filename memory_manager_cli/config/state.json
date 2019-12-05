@@ -1,1 +1,1 @@
-{"blocks_of_free_memory":[{"end_address":4000,"start_address":1100}],"cpu_processes":[{"end_address":1100,"name":"P1","start_address":400}],"os_size":400,"total_memory":4000}
+{"blocks_of_free_memory":[{"end_address":4000,"start_address":400}],"cpu_processes":[],"os_size":400,"total_memory":4000}

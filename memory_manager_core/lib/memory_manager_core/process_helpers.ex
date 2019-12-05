@@ -14,6 +14,7 @@ defmodule MemoryManagerCore.ProcessHelpers do
   end
 
   def derive_name_size_tuples_from_list_of_processes(list) do
+    list = Enum.sort(list, &(&1.start_address <= &2.start_address))
     Enum.map(list, fn process ->
       {process.name, get_size_of_process_in_list_by_name(list, process.name)}
     end)
