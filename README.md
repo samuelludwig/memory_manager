@@ -4,13 +4,11 @@ GitHub repo located at: https://github.com/samuelludwig/memory_manager
 
 Memory Manager Simulation project for COM 310
 
-Task: Create an interactive webapp that displays the impact of different kinds 
-of algorithms regarding the management of an OS's memory resources.
+## Project Structure
 
-The tech stack employed will be as follows:
-
-- Backend: Elixir (using Cowboy to manage the server connections)
-- Frontend: Elm
+- This project consists of two main components:
+  - `memory_manager_core`: houses the main business logic for calculating the state of memory.
+  - `memory_manager_cli`: the ascii-based UI for the simulator, which makes calls to the `memory_manager_core` API. This component is separately packaged and run as an escript, with the core module included as a dependancy. 
 
 ## Strategy Breakdown
 

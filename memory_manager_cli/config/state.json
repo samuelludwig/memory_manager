@@ -1,1 +1,1 @@
-{"blocks_of_free_memory":[{"end_address":4000,"start_address":400}],"cpu_processes":[],"os_size":400,"total_memory":4000}
+{"blocks_of_free_memory":[{"end_address":800,"start_address":400},{"end_address":2500,"start_address":1700},{"end_address":4000,"start_address":2900}],"cpu_processes":[{"end_address":1200,"name":"P08","start_address":800},{"end_address":1700,"name":"P11","start_address":1200},{"end_address":2900,"name":"P10","start_address":2500}],"os_size":400,"total_memory":4000}
