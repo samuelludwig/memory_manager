@@ -8,6 +8,10 @@ defmodule MemoryManagerCore.MemoryState do
           blocks_of_free_memory: [MemoryBlock.t()]
         }
 
+  def new(fields) do
+    struct!(__MODULE__, fields)
+  end
+
   def new(total_memory, os_size) when os_size <= total_memory do
     %__MODULE__{
       total_memory: total_memory,

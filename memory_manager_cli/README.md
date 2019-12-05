@@ -13,3 +13,4 @@
 
 - The total memory capacity of the simulation will be set at 4000, with the OS sized at 400, this is not due to limitations on the backend, calcualtions can be done for states of arbitrary size, rather it is to simplify the actual displaying of the information, and to make sure it can fit comfortably on screen.
 - For this same reason, when adding a process, the size must be a multiple of 50, this is because when representing the output on screen via ASCII, each character will represent 50 bytes in memory.
+- Finally, when a process is added, its size *must* be greater than 150 bytes.
